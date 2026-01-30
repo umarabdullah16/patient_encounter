@@ -1,5 +1,5 @@
 [project]
-name = "patient-encounter-system"
+name = "src"
 version = "0.1.0"
 description = ""
 authors = [
