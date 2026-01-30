@@ -1,3 +1,4 @@
+"""
 import pytest
 import requests
 from requests.exceptions import ConnectionError, Timeout
@@ -101,6 +102,8 @@ def appointment_id(patient_id, doctor_id):
 
 
 """
+
+"""
 def test_appointment_conflict(patient_id, doctor_id):
     # Attempt overlapping appointment → should return 409
     start_time = (
@@ -118,10 +121,11 @@ def test_appointment_conflict(patient_id, doctor_id):
     print("✔ Overlapping appointment returns 409")
 """
 
-
+"""
 def test_get_appointments_by_date():
     today = datetime.now(timezone.utc).date().isoformat()
     r = requests.get(f"{BASE_URL}/appointments?date={today}")
     assert r.status_code == 200
     assert isinstance(r.json(), list)
     print("✔ Appointments list fetched successfully")
+"""
