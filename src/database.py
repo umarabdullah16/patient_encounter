@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from dotenv import load_dotenv
 import os
+from typing import Generator
 
 load_dotenv()
 
@@ -24,7 +25,7 @@ except Exception as e:
 SessionLocal = sessionmaker(bind=engine)
 
 
-def get_db() -> Session:
+def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
     try:
         yield db
