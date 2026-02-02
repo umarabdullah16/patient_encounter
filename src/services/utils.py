@@ -28,20 +28,27 @@ def has_overlapping_appointment(
     start_time_utc = start_time.astimezone(timezone.utc)
     end_time_utc = start_time_utc + timedelta(minutes=duration)
 
-    # Fetch all future appointments for this doctor
+    # Fetch all appointments for the doctor and check overlaps in Python.
+    # Doing comparison in Python avoids issues with DB timezone/storage behavior.
     appointments = (
-        db.query(Appointment)
-        .filter(
-            Appointment.doctor_id == doctor_id,
-            Appointment.start_time >= datetime.now(timezone.utc),
-        )
-        .all()
+        db.query(Appointment).filter(Appointment.doctor_id == doctor_id).all()
     )
 
     # Check for overlap
     for appt in appointments:
-        existing_start = appt.start_time.astimezone(timezone.utc)
+        raw_start = appt.start_time
+        # Make existing_start timezone-aware (assume UTC if missing)
+        if raw_start.tzinfo is None or raw_start.tzinfo.utcoffset(raw_start) is None:
+            existing_start = raw_start.replace(tzinfo=timezone.utc)
+        else:
+            existing_start = raw_start.astimezone(timezone.utc)
+
         existing_end = existing_start + timedelta(minutes=appt.duration)
+
+        # Debug output for tracing overlap checks during tests
+        print(
+            f"[overlap-check] appt_id={getattr(appt, 'id', None)} existing_start={existing_start.isoformat()} existing_end={existing_end.isoformat()} new_start={start_time_utc.isoformat()} new_end={end_time_utc.isoformat()}"
+        )
 
         # Overlap condition
         if existing_start < end_time_utc and existing_end > start_time_utc:

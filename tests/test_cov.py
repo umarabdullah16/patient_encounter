@@ -150,7 +150,6 @@ def test_create_appointment(client, patient_id, doctor_id, base_time):
     assert r.status_code == 201
 
 
-"""
 def test_appointment_conflict(
     client, first_appointment, patient_id, doctor_id, base_time
 ):
@@ -165,7 +164,6 @@ def test_appointment_conflict(
     }
     r = client.post("/appointments", json=payload)
     assert r.status_code == 409
-"""
 
 
 def test_appointment_invalid_duration(client, patient_id, doctor_id, base_time):
