@@ -38,7 +38,16 @@ def post_patient(
     patient: PatientCreate,
     db: Session = Depends(get_db),
 ):
-    return create_patient(db, patient)
+    from sqlalchemy.exc import IntegrityError
+
+    try:
+        return create_patient(db, patient)
+    except IntegrityError:
+        # Convert DB-level unique constraint failures into a 400 response
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Patient with this email already exists",
+        )
 
 
 @app.get("/doctors/{id}", response_model=DoctorRead)

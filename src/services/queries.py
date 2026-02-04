@@ -44,7 +44,12 @@ def create_appointment(db: Session, appointment_data) -> Appointment:
             detail="Doctor already has an overlapping appointment",
         )
 
-    appointment = Appointment(**appointment_data.model_dump())
+    # Ensure DB non-null constraint for 'reason' is satisfied
+    data = appointment_data.model_dump()
+    if data.get("reason") is None:
+        data["reason"] = ""
+
+    appointment = Appointment(**data)
     db.add(appointment)
     db.commit()
     db.refresh(appointment)
