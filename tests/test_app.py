@@ -246,7 +246,7 @@ def test_appointment_service_create(db):
     patient = service.create_patient(db, patient_in)
 
     doctor_in = DoctorCreate(
-        full_name="Dr. Service", specialization="Dermatology", active=True
+        full_name="Dr. Service", specialty="Dermatology", active=True
     )
     doctor = service.create_doctor(db, doctor_in)
 

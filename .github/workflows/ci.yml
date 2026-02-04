@@ -41,4 +41,7 @@ jobs:
       run: poetry run bandit -r src
 
     - name: Run unit tests with pytest
-      run: poetry run pytest -q tests/test_app.py
+      env:
+        DATABASE_URL: sqlite:///./test.db
+      run: |
+        poetry run pytest -q

@@ -1,6 +1,6 @@
 # Patient Encounter System
 
-A simple FastAPI-based backend for managing patient encounters, built with SQLAlchemy, Pydantic, and MySQL.
+A simple FastAPI-based backend for managing patient encounters, built with SQLAlchemy, Pydantic, and SQLite (default for local/dev/test).
 
 ## Features
 - FastAPI for RESTful APIs
@@ -31,13 +31,12 @@ pip install -r requirements.txt
 ```
 
 ### 3. Configure environment variables
-Create a `.env` file in the root directory with the following variables:
+Create a `.env` file in the root directory to configure the database connection. You can set a `DATABASE_URL` environment variable if you want to use a remote DB (e.g. Postgres or MySQL). If not provided, the app defaults to a local SQLite DB (`sqlite:///./test.db`).
+
+Example (optional):
 ```
-db_user=your_db_user
-db_password=your_db_password
-db_host=localhost
-db_port=3306
-db_database=your_db_name
+# Optional: use an explicit DB URL
+DATABASE_URL=sqlite:///./test.db
 ```
 
 ### 4. Run database migrations (if any)

@@ -73,15 +73,15 @@ class PatientReadWithAppointments(PatientRead):
 
 
 class DoctorCreate(BaseModel):
-    full_name: str = constr(min_length=2)
-    specialty: str = constr(min_length=2)
+    full_name: constr(min_length=2)
+    specialty: constr(min_length=2)
     active: bool = True
 
 
 class DoctorRead(BaseModel):
     id: PositiveInt
-    full_name: str = constr(min_length=2)
-    specialty: str = constr(min_length=2)
+    full_name: constr(min_length=2)
+    specialty: constr(min_length=2)
     active: bool
     created_at: datetime
 
