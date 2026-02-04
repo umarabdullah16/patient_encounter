@@ -910,22 +910,6 @@ files = [
 windows-terminal = ["colorama (>=0.4.6)"]
 
 [[package]]
-name = "pymysql"
-version = "1.1.2"
-description = "Pure Python MySQL Driver"
-optional = false
-python-versions = ">=3.8"
-groups = ["main"]
-files = [
-    {file = "pymysql-1.1.2-py3-none-any.whl", hash = "sha256:e6b1d89711dd51f8f74b1631fe08f039e7d76cf67a42a323d3178f0f25762ed9"},
-    {file = "pymysql-1.1.2.tar.gz", hash = "sha256:4961d3e165614ae65014e361811a724e2044ad3ea3739de9903ae7c21f539f03"},
-]
-
-[package.extras]
-ed25519 = ["PyNaCl (>=1.4.0)"]
-rsa = ["cryptography"]
-
-[[package]]
 name = "pytest"
 version = "9.0.2"
 description = "pytest: simple powerful testing with Python"
@@ -1448,4 +1432,4 @@ standard = ["colorama (>=0.4) ; sys_platform == \"win32\"", "httptools (>=0.6.3)
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10"
-content-hash = "00a21e0cf7577d2f85302e75bf954adb6b91babd27ab0afd7dfea126d2909b42"
+content-hash = "7068771101b81e73cf8207877f6c7beff6a17db5227ba22debe6b4e320c13376"
