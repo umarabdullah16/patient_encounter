@@ -1,4 +1,3 @@
-"""
 import pytest
 import requests
 from requests.exceptions import ConnectionError, Timeout
@@ -14,10 +13,9 @@ BASE_URL = "http://127.0.0.1:8000"
 def test_server_is_reachable():
     try:
         response = requests.get(f"{BASE_URL}/health")
-        assert response.status_code in (200, 404)  # empty list might return 200 or 404
-        print("✔ Server is ON and reachable")
+        assert response.status_code in (200, 404)
     except (ConnectionError, Timeout):
-        pytest.fail("✘ Server is NOT reachable")
+        pytest.fail("Server is NOT reachable")
 
 
 # ----------------------------
@@ -35,7 +33,6 @@ def patient_id():
     }
     r = requests.post(f"{BASE_URL}/patients", json=payload)
     assert r.status_code == 201
-    print("✔ Patient added successfully")
     return r.json()["id"]
 
 
@@ -44,7 +41,28 @@ def doctor_id():
     payload = {"full_name": "Dr. Smith", "specialty": "Cardiology", "active": True}
     r = requests.post(f"{BASE_URL}/doctors", json=payload)
     assert r.status_code == 201
-    print("✔ Doctor added successfully")
+    return r.json()["id"]
+
+
+@pytest.fixture(scope="module")
+def base_time():
+    # Use a single base time for the module to make time-based tests deterministic
+    # Zero microseconds to avoid sub-second boundary flakiness
+    return datetime.now(timezone.utc).replace(microsecond=0)
+
+
+@pytest.fixture(scope="module")
+def appointment_id(patient_id, doctor_id, base_time):
+    start_time = (base_time + timedelta(hours=1)).isoformat()
+    payload = {
+        "patient_id": patient_id,
+        "doctor_id": doctor_id,
+        "reason": "Checkup",
+        "start_time": start_time,
+        "duration": 60,
+    }
+    r = requests.post(f"{BASE_URL}/appointments", json=payload)
+    assert r.status_code == 201
     return r.json()["id"]
 
 
@@ -56,13 +74,11 @@ def test_get_patient(patient_id):
     assert r.status_code == 200
     data = r.json()
     assert data["id"] == patient_id
-    print("✔ Patient retrieved successfully")
 
 
 def test_get_nonexistent_patient():
     r = requests.get(f"{BASE_URL}/patients/9999")
     assert r.status_code == 404
-    print("✔ Non-existent patient returns 404")
 
 
 # ----------------------------
@@ -73,42 +89,19 @@ def test_get_doctor(doctor_id):
     assert r.status_code == 200
     data = r.json()
     assert data["id"] == doctor_id
-    print("✔ Doctor retrieved successfully")
 
 
 def test_get_nonexistent_doctor():
     r = requests.get(f"{BASE_URL}/doctors/9999")
     assert r.status_code == 404
-    print("✔ Non-existent doctor returns 404")
 
 
 # ----------------------------
 # Appointment tests
 # ----------------------------
-@pytest.fixture(scope="module")
-def appointment_id(patient_id, doctor_id):
-    start_time = (datetime.now(timezone.utc) + timedelta(hours=1)).isoformat()
-    payload = {
-        "patient_id": patient_id,
-        "doctor_id": doctor_id,
-        "reason": "Checkup",
-        "start_time": start_time,
-        "duration": 60,
-    }
-    r = requests.post(f"{BASE_URL}/appointments", json=payload)
-    assert r.status_code == 201
-    print("✔ Appointment created successfully")
-    return r.json()["id"]
-
-
 """
-
-"""
-def test_appointment_conflict(patient_id, doctor_id):
-    # Attempt overlapping appointment → should return 409
-    start_time = (
-        datetime.now(timezone.utc) + timedelta(hours=1, minutes=30)
-    ).isoformat()
+def test_appointment_conflict(patient_id, doctor_id, base_time):
+    start_time = (base_time + timedelta(hours=1, minutes=30)).isoformat()
     payload = {
         "patient_id": patient_id,
         "doctor_id": doctor_id,
@@ -118,14 +111,11 @@ def test_appointment_conflict(patient_id, doctor_id):
     }
     r = requests.post(f"{BASE_URL}/appointments", json=payload)
     assert r.status_code == 409
-    print("✔ Overlapping appointment returns 409")
 """
 
-"""
-def test_get_appointments_by_date():
-    today = datetime.now(timezone.utc).date().isoformat()
+
+def test_get_appointments_by_date(base_time):
+    today = base_time.date().isoformat()
     r = requests.get(f"{BASE_URL}/appointments?date={today}")
     assert r.status_code == 200
     assert isinstance(r.json(), list)
-    print("✔ Appointments list fetched successfully")
-"""

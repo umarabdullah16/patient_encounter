@@ -32,6 +32,8 @@ app.dependency_overrides[get_db] = override_get_db
 # Create tables once for tests
 @pytest.fixture(scope="session", autouse=True)
 def create_test_db():
+    # Ensure a clean start by dropping any existing tables first (defensive)
+    Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
     yield
     Base.metadata.drop_all(bind=engine)
@@ -74,7 +76,8 @@ def doctor_id(client):
 
 @pytest.fixture(scope="module")
 def base_time():
-    return datetime.now(timezone.utc)
+    # Zero microseconds to avoid sub-second boundary issues in overlaps
+    return datetime.now(timezone.utc).replace(microsecond=0)
 
 
 @pytest.fixture(scope="module")
@@ -137,6 +140,8 @@ def test_create_doctor_invalid(client):
 # ----------------------------
 # Appointment tests
 # ----------------------------
+
+
 def test_create_appointment(client, patient_id, doctor_id, base_time):
     start_time = (base_time + timedelta(hours=2)).isoformat()
     payload = {

@@ -1,0 +1,21 @@
+# Bandit configuration file
+# See: https://bandit.readthedocs.io/
+[bandit]
+# Paths to scan (can be comma-separated)
+targets = src
+
+# Directories to exclude from scans
+exclude_dirs = tests
+
+# Comma-separated list of Bandit test IDs to skip (adjust as needed)
+skips = B101,B307
+
+# Output format (text, json, xml)
+output_format = json
+
+# Thresholds - adjust to your project's needs
+severity = MEDIUM
+confidence = MEDIUM
+
+# Recursive scan
+recursive = True
